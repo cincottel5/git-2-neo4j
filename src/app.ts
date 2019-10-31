@@ -1,61 +1,60 @@
 #!/usr/bin/env node
 
-const { exec } = require('child_process');
+import { exec } from 'child_process';
+
+import { Command } from './command';
+import { Commit } from './commit';
 
 /**
- * 3. Create directory
+ * Main execution;
  */
-exec('mkdir public/repo', (err, stdout, stderr) => {
-    if (err) {
-        console.error(err)
-    } else {
-
-        console.log("paso 1");
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
+async function main() {
+    if (!process.argv[2]) {
+        console.log("Not valid repo!!");
+        return;
     }
-});
 
-/**
- * 1. Download repository
- */
+    let firsStepCommands = [
+        'rm public/log.txt',
+        'mkdir public/repo',
+        `git clone ${process.argv[2]} ./public/repo`,
+        'git --git-dir=public/repo/.git log --stat >> public/log.txt',
+        'rm -Rf public/repo'
+    ];
 
-exec(`git clone ${process.argv[2]} ./public/repo`, (err, stdout, stderr) => {
-    if (err) {
-        console.error(err)
-    } else {
-        console.log("paso 2");
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-    }
-});
+    //await Command.execute(firsStepCommands);
+    console.log('Finalizó extraer archivo');
+    
+    
 
-/**
- * 2. Create log file
- */
+    require('fs').readFileSync('public/log.txt', 'utf-8').split(/(\n|)(commit)!?./g).forEach(async function(commit){
+        commit = commit.trim();
+        if (commit == '' || commit == 'commit') return;
 
-let command = 'git --git-dir=public/repo/.git log --stat >> public/log.txt'
+        //let reader = commit
+        let object = new Commit();
+        object.id = commit.match(/^(\s)?([\w]+)/g)[0];
+        object.author = commit.match(/(?<=Author:).*/g)[0].trim();
+        object.date = commit.match(/(?<=Date:).*/g)[0].trim();
+        object.comment = commit.match(/(?<=\s{4}).*/g)[0].trim();
+        
+        // (?<=commit).*
 
-exec(command, (err, stdout, stderr) => {
-    if (err) {
-        console.error(err)
-    } else {
-        console.log("paso 3");
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-    }
-});
+        console.log("**********************************")
+        console.log(object.id);
+        console.log(object.author);
+        console.log(object.date);
+        console.log(object.comment);
+        
+        // find all files
+        // (.)+(.java){1}(\s)*(\|)
+        
+        // Command.execute([`echo '\nCOMMIT\n' >> public/log2.txt`])
+        // Command.execute([`echo '${commit}' >> public/log2.txt`])
+    });
+}
 
-/**
- * 3. Delete remote branch
- */
-exec('rm -Rf public/repo', (err, stdout, stderr) => {
-    if (err) {
-        console.error(err)
-    } else {
-        console.log("paso 4");
-        console.log(`stdout: ${stdout}`);
-        console.log(`stderr: ${stderr}`);
-    }
-});
+main();
+
+
 
