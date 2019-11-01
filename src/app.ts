@@ -63,7 +63,7 @@ async function main() {
             
             let splitFullName = fullName.split(/(\/|\\)/g)||[];
 
-            let className = splitFullName[splitFullName.length-1];
+            let className = (fullName.match(/(\/)((?!\/).)+(?=\.)/)||"").replace(/(\/|\\)/g, '');
                 
 
             //let nameString = split[split.length-1].split(/(\/|\\)/g)
