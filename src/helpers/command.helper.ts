@@ -1,3 +1,5 @@
+import { config } from '../config/app.config';
+
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
@@ -22,5 +24,18 @@ export class Command{
         console.log("******* Finalizado ******");
     
         await this.execute(array, position+1)
+    }
+
+    static async createLog() {
+        let firsStepCommands = [
+            `rm ${config.file_log_url}`,
+            'mkdir public/repo',
+            `git clone ${process.argv[2]} ./public/repo`,
+            `git --git-dir=public/repo/.git log --stat --name-only >> ${config.file_log_url}`,
+            'rm -Rf public/repo'
+        ];
+    
+        await Command.execute(firsStepCommands);
+        console.log('Finalizó creación del log');
     }
 }

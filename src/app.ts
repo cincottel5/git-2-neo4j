@@ -2,8 +2,13 @@
 
 import { exec } from 'child_process';
 
-import { Command } from './command';
 import { Commit } from './models/commit';
+import { config } from './config/app.config';
+import { LogToObject } from './helpers/log-to-object.helper';
+import { Command } from './helpers/command.helper';
+import { Neo4jHelper } from './helpers/neo4j.helper';
+
+let commits = [];
 
 /**
  * Main execution;
@@ -18,68 +23,25 @@ async function main() {
         return;
     }
 
-    let firsStepCommands = [
-        'rm public/log.txt',
-        'mkdir public/repo',
-        `git clone ${process.argv[2]} ./public/repo`,
-        'git --git-dir=public/repo/.git log --stat >> public/log.txt',
-        'rm -Rf public/repo'
-    ];
-
-    //await Command.execute(firsStepCommands);
-    console.log('Finalizó extraer archivo');
+    console.log('1. Ejecutando comandos');
+    //Command.createLog();
     
-    let baseRoute = '/src';
+    console.log('2. Convirtiendo log');
+    commits = LogToObject.getCommits();
 
+    //let commit = commits.filter(c=>c.id =='aa8bb12f0b562d1615c7cf6ccb49b593c4860f59')[0];
 
-    require('fs').readFileSync('public/log.txt', 'utf-8').split(/(\n|)(commit)!?./g).forEach(async function(commit){
-        commit = commit.trim();
-        if (commit == '' || commit == 'commit') return;
+    console.log('3. Consultando archivos');
+    let neo4j = new Neo4jHelper();
 
-        //let reader = commit
-        //let object = new Commit(commit);
-        
-        // (?<=commit).*
+    for (let commit of commits.slice(0,50)) {
 
-        console.log("**********************************")
-        // console.log(object.id);
-        // console.log(object.author);
-        // console.log(object.date);
-        // console.log(object.comment);
+        let files = await neo4j.searchFiles(commit);
 
-        let files = commit.match(/(.)+(.java){1}(\s)*(\|)/g)||[];
-
-        //console.log(files.length);
-        for (let f of files) {
-            let split = f.split(/(\/src\/)/)||[];
-
-            if (split.length < 1) continue;
-
-            let fullName = split[split.length-1]
-                .replace('|', '').trim();
-
-
-            let qualifiedName = fullName.replace(/(\/|\\)/g, '.');
-            
-            let splitFullName = fullName.split(/(\/|\\)/g)||[];
-
-            let className = (fullName.match(/(\/)((?!\/).)+(?=\.)/)||"").replace(/(\/|\\)/g, '');
-                
-
-            //let nameString = split[split.length-1].split(/(\/|\\)/g)
-            console.log(`qualifiedName: ${qualifiedName} - class name: ${className}`);
-            // let realName =  f.split(/(\/src\/)/)||[];
-            // realName = realName[realName.length-1];
-
-
-        }
-        
-        // find all files
-        // (.)+(.java){1}(\s)*(\|)
-        
-        // Command.execute([`echo '\nCOMMIT\n' >> public/log2.txt`])
-        // Command.execute([`echo '${commit}' >> public/log2.txt`])
-    });
+        //await neo4j.saveCommit(commit, files);
+    }
+    
+    process.exit(0);
 }
 
 main();
