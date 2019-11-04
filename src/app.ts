@@ -18,29 +18,25 @@ let commits = [];
  * argv[4] = array of extensions
  */
 async function main() {
-    if (!process.argv[2]) {
-        console.log("Not valid repo!!");
-        return;
-    }
-
     console.log('1. Ejecutando comandos');
-    //Command.createLog();
-    
+    await Command.createLog()
+
     console.log('2. Convirtiendo log');
     commits = LogToObject.getCommits();
-
-    //let commit = commits.filter(c=>c.id =='aa8bb12f0b562d1615c7cf6ccb49b593c4860f59')[0];
 
     console.log('3. Consultando archivos');
     let neo4j = new Neo4jHelper();
 
-    for (let commit of commits.slice(0,50)) {
+    console.log(`Commits: ${commits.length}`);
+
+    for (let commit of commits) {
 
         let files = await neo4j.searchFiles(commit);
 
-        //await neo4j.saveCommit(commit, files);
+        await neo4j.saveCommit(commit, files);
     }
     
+    console.log("********** ======= Fin ======= ***********");
     process.exit(0);
 }
 

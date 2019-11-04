@@ -28,9 +28,9 @@ export class Command{
 
     static async createLog() {
         let firsStepCommands = [
-            `rm ${config.file_log_url}`,
+            `rm -f ${config.file_log_url}`,
             'mkdir public/repo',
-            `git clone ${process.argv[2]} ./public/repo`,
+            `git clone ${config.repository_url} ./public/repo`,
             `git --git-dir=public/repo/.git log --stat --name-only >> ${config.file_log_url}`,
             'rm -Rf public/repo'
         ];

@@ -3,6 +3,7 @@ import { Commit } from '../models/commit';
 import { File } from '../models/file';
 
 import { v1 as neo4j } from 'neo4j-driver';
+import  validator  from 'validator';
 
 export class Neo4jHelper {
     protected driver;
@@ -42,8 +43,8 @@ export class Neo4jHelper {
     /**
      * 
      */
-    async searchFiles(commit: Commit, projectName= 'MongoDB.C#.Driver') {
-        let q1 = `match (p:Project)-[:HAS_CLASS]->(c:Class) where p.id = '${projectName}' `;
+    async searchFiles(commit: Commit) {
+        let q1 = `match (p:Project)-[:HAS_CLASS]->(c:Class) where p.id = '${config.neo4j_project_id}' `;
         let qRet = ' return c';  
 
         let filesToSave = [];
@@ -58,7 +59,7 @@ export class Neo4jHelper {
                 result = await this.run(query);
             }
             catch (e) {
-                console.log("Error Neo4j");
+                console.log("Error Neo4j - buscando archivos");
                 console.log(query);
                 //throw e;
             }
@@ -104,9 +105,40 @@ export class Neo4jHelper {
         return filesToSave;
     }
 
-    async saveCommit(commit, files) {
+    
+    async saveCommit(commit:Commit, files) {
         if (files.length < 1) return;
+
+        let comment = validator.escape(commit.comment||'');
+
+        let commitQuery = [
+            ` (commit:Commit{id: '${commit.id}', `,
+            ` author: '${commit.author}', `,
+            ` date:'${commit.date}', `,
+            ` comment: '${comment}'}) `
+        ];
+
+        //let newCommit = await this.run(commitQuery.join(' '));
+
+        for ( let file of files ) {
+            let relQuery = [
+                ` MATCH (p:Project{id:'${config.neo4j_project_id}'})-[:HAS_CLASS]->(class:Class) `,
+                ` WHERE class.qualifiedname = '${file.get('c').properties.qualifiedname}' `,
+                ` MERGE ${commitQuery.join(' ')}`,
+                ` MERGE (class)-[r:CHANGED_IN]->(commit) `
+            ];
+
+            try {
+                await this.run(relQuery.join(' '));
+                console.log('Relationship stablished');
+            }
+            catch (e) {
+                console.log("Error Neo4j - guardando archivos");
+                console.log(relQuery.join(' '));
+                console.log(e);
+            }
+        }
         
-         
+        console.log(`Commit ${commit.id} guardado`);
     }
 }

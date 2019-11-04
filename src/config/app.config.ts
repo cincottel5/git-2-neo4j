@@ -1,4 +1,7 @@
 export const config = {
+    //repository_url: 'https://github.com/mongodb/mongo-csharp-driver.git',
+    repository_url: 'https://github.com/JamesNK/Newtonsoft.Json.git',
+
     file_log_url: 'public/log.txt',
     file_search_path: 'src',
     
@@ -16,9 +19,12 @@ export const config = {
     neo4j_port: '7687',
     neo4j_user: 'neo4j',
     neo4j_pass: 'cincottel', 
+    //neo4j_project_id: 'MongoDB.C#.Driver',
+    neo4j_project_id: 'Json.NET',
 
     ignore_paths: [
         'src',
+        'Src',
         'Tests',
         'tests'
     ]
