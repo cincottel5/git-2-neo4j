@@ -15,11 +15,12 @@ export class Commit {
             this.id = commitTxt.match(config.regex_commit_id)[0].trim();
             this.author = commitTxt.match(config.regex_commit_author)[0].trim();
             this.date = commitTxt.match(config.regex_commit_date)[0].trim();
-            this.comment = commitTxt.match(config.regex_commit_comment)[0].trim();
+            this.comment = (commitTxt.match(config.regex_commit_comment)||[""])[0].trim();
         }
         catch (e) {
             console.log("COMMIT Error");
             console.log(commitTxt);
+            console.log(`Error: ${e}`);
             //throw e;
         }
         
@@ -27,7 +28,6 @@ export class Commit {
 
         for (let f of files) {
             if (f.trim() == "") continue;
-            //if (f.indexOf(config.file_search_path) < 0) continue;
 
             try {
                 this.files.push(new File(f));

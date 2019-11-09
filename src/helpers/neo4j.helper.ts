@@ -55,7 +55,6 @@ export class Neo4jHelper {
             let result;
 
             try {
-                //console.log(`QUERY: ${query}`)
                 result = await this.run(query);
             }
             catch (e) {
@@ -68,16 +67,11 @@ export class Neo4jHelper {
                 filesToSave.push(result.records[0]);
 
             } else if (result.records.length >= 2) {
-                console.log('De varios');
                 let maxCoincidence = 0;
                 let maxRecord = result.records[0];
 
                 if (file.words.size >= 1) {
-                    console.log('entro al loop de words');
-                    console.log(file.fullName);
-                    console.log(file.words);
                     for (let r of result.records) {
-                        console.log(r.get('c').properties.qualifiedname);
                         
                         let recordCoincidence = 0;
 
@@ -92,22 +86,20 @@ export class Neo4jHelper {
                         }
                     }       
                 }
-                console.log('ganador:');
-                console.log(maxRecord.get('c').properties.qualifiedname)
+
                 filesToSave.push(maxRecord);
             } 
-            // else {
-            //     console.log(`no encontro nada`);
-            // }
-
         }
-        console.log(`commit: ${commit.id} - files to save: ${filesToSave.length}`);
         return filesToSave;
     }
 
-    
+    /**
+     * Save the commit relationships
+     * @param commit 
+     * @param files 
+     */
     async saveCommit(commit:Commit, files) {
-        if (files.length < 1) return;
+        if (files != null && files.length < 1) return;
 
         let comment = validator.escape(commit.comment||'');
 
@@ -118,7 +110,7 @@ export class Neo4jHelper {
             ` comment: '${comment}'}) `
         ];
 
-        //let newCommit = await this.run(commitQuery.join(' '));
+        let savedFiles = 0;
 
         for ( let file of files ) {
             let relQuery = [
@@ -130,7 +122,7 @@ export class Neo4jHelper {
 
             try {
                 await this.run(relQuery.join(' '));
-                console.log('Relationship stablished');
+                savedFiles++;
             }
             catch (e) {
                 console.log("Error Neo4j - guardando archivos");
@@ -138,7 +130,14 @@ export class Neo4jHelper {
                 console.log(e);
             }
         }
-        
-        console.log(`Commit ${commit.id} guardado`);
+
+        savedFiles = typeof savedFiles == 'number' ? savedFiles : 0;
+
+        console.log(`Commit: ${commit.id}`);
+        console.log(`Archivos encontrados: ${files.length}`);
+        console.log(`Relaciones creadas: ${savedFiles}`);
+        console.log(`*****************`);
+
+        return savedFiles;
     }
 }
