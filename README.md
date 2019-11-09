@@ -28,4 +28,4 @@ Los parametros de la aplicación se encuentran en el archivo ```src/config/app.c
 1. Descargar la aplicación.
 2. Importar las librerias con el comando ```npm install```.
 3. Definir los parametros de configuración en el archivo ```src/config/app.config```.
-4. Ejecutar el comando ```npm start`` desde la carpeta raíz.
+4. Ejecutar el comando ```npm start``` desde la carpeta raíz.
