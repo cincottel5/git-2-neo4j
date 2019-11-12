@@ -62,6 +62,8 @@ export class Neo4jHelper {
                 console.log(query);
                 //throw e;
             }
+
+            if (result == undefined) return;
             
             if (result.records.length == 1) {
                 filesToSave.push(result.records[0]);

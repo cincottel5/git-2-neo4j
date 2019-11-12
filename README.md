@@ -1,5 +1,13 @@
 # GIT 2 NEO4J
 
+# Instalación
+
+* Sistema operativo (Mac OS y Linux)
+
+## MAC
+* Ejecutar el comando ```xcode-select --install```
+
+
 El proposito de este aplicativo, es extraer el historial de cambios de un repositorio de Git, y alimentar una base de datos Neo4j con el acoplamiento lógico.
 
 ## Proceso del aplicativo

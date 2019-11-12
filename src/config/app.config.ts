@@ -1,9 +1,10 @@
 export const config = {
     //repository_url: 'https://github.com/mongodb/mongo-csharp-driver.git',
-    repository_url: 'https://github.com/JamesNK/Newtonsoft.Json.git',
+    //repository_url: 'https://github.com/JamesNK/Newtonsoft.Json.git',
+    repository_url: 'https://github.com/microsoft/nodejstools.git',
 
     file_log_url: 'public/log.txt',
-    file_search_path: 'src',
+    file_search_path: '',
     
     regex_commit: /(^|\n)(commit+(?=\s{1}\w{40}\n))/g,
     regex_files: /\n([^\s])+(\.java|\.cs|\.js|\.rb){1}/g,
