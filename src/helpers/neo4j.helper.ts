@@ -60,6 +60,7 @@ export class Neo4jHelper {
             catch (e) {
                 console.log("Error Neo4j - buscando archivos");
                 console.log(query);
+                continue;
                 //throw e;
             }
 
@@ -95,13 +96,21 @@ export class Neo4jHelper {
         return filesToSave;
     }
 
+    isIterable(obj) {
+        // checks for null and undefined
+        if (obj == null) {
+          return false;
+        }
+        return typeof obj[Symbol.iterator] === 'function';
+      }
+
     /**
      * Save the commit relationships
      * @param commit 
      * @param files 
      */
     async saveCommit(commit:Commit, files) {
-        if (files != null && files.length < 1) return;
+        if (files != null && files.length < 1 && !this.isIterable(files)) return;
 
         let comment = validator.escape(commit.comment||'');
 

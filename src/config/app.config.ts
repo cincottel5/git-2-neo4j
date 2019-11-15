@@ -1,7 +1,7 @@
 export const config = {
     //repository_url: 'https://github.com/mongodb/mongo-csharp-driver.git',
     //repository_url: 'https://github.com/JamesNK/Newtonsoft.Json.git',
-    repository_url: 'https://github.com/microsoft/nodejstools.git',
+    repository_url: 'https://github.com/JamesNK/Newtonsoft.Json.git',
 
     file_log_url: 'public/log.txt',
     file_search_path: '',

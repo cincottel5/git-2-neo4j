@@ -22,8 +22,8 @@ let commits = [];
 async function main() {
     var startTime  = moment();
 
-    console.log("\n******** 1. Ejecutando comandos **********\n");
-    await Command.createLog()
+    // console.log("\n******** 1. Ejecutando comandos **********\n");
+    // await Command.createLog()
 
     console.log("\n********* 2.  Convirtiendo log ***********\n");
     commits = LogToObject.getCommits();
@@ -37,6 +37,9 @@ async function main() {
     for (let commit of commits) {
 
         let files = await neo4j.searchFiles(commit);
+
+        if (!Array.isArray(files)) continue;
+
         let savedFiles = await neo4j.saveCommit(commit, files);
 
         if (typeof savedFiles != 'number') {
