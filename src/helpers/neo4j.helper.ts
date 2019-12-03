@@ -17,6 +17,11 @@ export class Neo4jHelper {
                 `bolt://${config.neo4j_host}:${config.neo4j_port}`,
                 neo4j.auth.basic(config.neo4j_user, config.neo4j_pass));
         } catch (e) {
+            console.log("****************************************");
+            console.log("Error en la conexión de base  de datos");
+            console.log(e);
+            console.log("****************************************");
+
             throw e;
         }
     }
@@ -128,12 +133,18 @@ export class Neo4jHelper {
                 ` MATCH (p:Project{id:'${config.neo4j_project_id}'})-[:HAS_CLASS]->(class:Class) `,
                 ` WHERE class.qualifiedname = '${file.get('c').properties.qualifiedname}' `,
                 ` MERGE ${commitQuery.join(' ')}`,
-                ` MERGE (class)-[r:CHANGED_IN]->(commit) `
+                ` MERGE (p)-[:HAS_COMMIT]->(commit) `,
+                ` MERGE (class)-[:CHANGED_IN]->(commit) `,
+                ` ON CREATE SET class.changes_count = 1 `,
+                ` ON MATCH SET class.changes_count = class.changes_count + 1 `
             ];
 
             try {
+
                 await this.run(relQuery.join(' '));
                 savedFiles++;
+
+                await this.commitFileRelationship(file, files);
             }
             catch (e) {
                 console.log("Error Neo4j - guardando archivos");
@@ -150,5 +161,42 @@ export class Neo4jHelper {
         console.log(`*****************`);
 
         return savedFiles;
+    }
+
+    async commitFileRelationship(file, files) {
+        let relFiles = files.filter( function(x) { 
+            return x != file
+        });
+
+        // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+        // console.log('Archivo');
+        // console.log(file.get('c').properties.qualifiedname);
+        // console.log('Archivos');
+        // console.log(files.map(x=>x.get('c').properties.qualifiedname));
+        // console.log('Filtrado');
+        // console.log(relFiles.map(x=>x.get('c').properties.qualifiedname));
+        // console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n');
+        // return;
+
+        for (let fi of relFiles) {
+            let query = [
+                ` match (p:Project{id: '${config.neo4j_project_id}'})-[:HAS_CLASS]->(c1:Class { 
+                  qualifiedname: '${file.get('c').properties.qualifiedname}'}), 
+                  (p:Project{id: '${config.neo4j_project_id}'})-[:HAS_CLASS]->(c2:Class{
+                  qualifiedname: '${fi.get('c').properties.qualifiedname}'}) `,
+                ` merge (c1)-[r:CO_EVOLVE]-(c2) 
+                  ON CREATE SET r.changes_count = 1 
+                  ON MATCH SET r.changes_count = r.changes_count + 1`
+            ];
+
+            try {
+                await this.run(query.join(' '));
+            }
+            catch (e) {
+                console.log("Error Neo4j - creando co-evolve");
+                console.log(query.join(' '));
+                console.log(e);
+            }
+        }
     }
 }

@@ -1,10 +1,16 @@
 export const config = {
+    // funciona bien
     //repository_url: 'https://github.com/mongodb/mongo-csharp-driver.git',
-    //repository_url: 'https://github.com/JamesNK/Newtonsoft.Json.git',
+
+    // funciona bien
     repository_url: 'https://github.com/JamesNK/Newtonsoft.Json.git',
+    
+
+    //repository_url: 'https://github.com/microsoft/nodejstools.git',
+
 
     file_log_url: 'public/log.txt',
-    file_search_path: '',
+    file_search_path: 'Src',
     
     regex_commit: /(^|\n)(commit+(?=\s{1}\w{40}\n))/g,
     regex_files: /\n([^\s])+(\.java|\.cs|\.js|\.rb){1}/g,
@@ -20,8 +26,14 @@ export const config = {
     neo4j_port: '7687',
     neo4j_user: 'neo4j',
     neo4j_pass: 'cincottel', 
+
+    // functiona bien
     //neo4j_project_id: 'MongoDB.C#.Driver',
+
+    // Funciona bien
     neo4j_project_id: 'Json.NET',
+
+    //neo4j_project_id: 'NodeJS.Tools',
 
     ignore_paths: [
         'src',

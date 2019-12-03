@@ -22,9 +22,9 @@ let commits = [];
 async function main() {
     var startTime  = moment();
 
-    // console.log("\n******** 1. Ejecutando comandos **********\n");
-    // await Command.createLog()
-
+    console.log("\n******** 1. Ejecutando comandos **********\n");
+    //await Command.createLog()
+    
     console.log("\n********* 2.  Convirtiendo log ***********\n");
     commits = LogToObject.getCommits();
 
@@ -51,13 +51,13 @@ async function main() {
     }
 
     var endTime  = moment()
-    var totalTime = endTime.diff(startTime, 'minutes');
+    var totalTime = endTime.diff(startTime, 'seconds');
     
     console.log("\n********* ===== Totales ====== ***********\n");
     console.log(`Cantidad de commits: ${commits.length}`);
     console.log(`Cantidad de archivos encontrados: ${totalFiles}`);
     console.log(`Cantidad de relaciones creadas: ${totalRelationships}`);
-    console.log(`Tiempo total de ejecución: ${totalTime} minuto(s)`);
+    console.log(`Tiempo total de ejecución: ${totalTime} segundos`);
     console.log("\n********** ======= Fin ======= ***********");
     process.exit(0);
 }
