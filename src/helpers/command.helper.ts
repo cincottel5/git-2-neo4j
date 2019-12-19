@@ -23,7 +23,7 @@ export class Command{
         console.log("*************************")
         console.log("******* Finalizado ******");
     
-        await this.execute(array, position+1)
+        await this.execute(array, position+1);
     }
 
     static async createLog() {
