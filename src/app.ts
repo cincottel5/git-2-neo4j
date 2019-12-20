@@ -23,7 +23,7 @@ async function main() {
     var startTime  = moment();
 
     console.log("\n******** 1. Ejecutando comandos **********\n");
-    //await Command.createLog()
+    await Command.createLog();
     
     console.log("\n********* 2.  Convirtiendo log ***********\n");
     commits = LogToObject.getCommits();
