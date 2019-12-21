@@ -54,15 +54,18 @@ Los parametros de la aplicación se encuentran en el archivo ```src/config/app.c
 
 ## Ejecución
 
-1. 
-2. Definir los parametros de configuración en el archivo ```src/config/app.config```.
-3. Ejecutar desde una terminal, desde la carpeta raíz, el comando ```npm start```.
+1. Definir los parametros de configuración en el archivo ```src/config/app.config```.
+2. Ejecutar desde una terminal, desde la carpeta raíz, el comando ```npm start```.
 
 ## Suposiciones
 * Las credenciales de la base de datos son válidas.
 * Se tiene acceso a una base de datos Neo4j.
 * El usuario de git tiene permisos sobre el repositorio objetivo.
 * El usuario tiene permisos para modificar la carpeta del proyecto.
+
+## Documentación
+
+* Repositorio: _https://github.com/cincottel5/git-2-neo4j.git_.
 
 ## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
