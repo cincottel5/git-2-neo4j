@@ -67,5 +67,10 @@ Los parametros de la aplicación se encuentran en el archivo ```src/config/app.c
 
 * Repositorio: _https://github.com/cincottel5/git-2-neo4j.git_.
 
+## Autores
+* Yelko Carvajal Mora
+* Daniel Bertarioni Chaves
+* Antonio González Torres
+
 ## Licencia
 [MIT](https://choosealicense.com/licenses/mit/)
